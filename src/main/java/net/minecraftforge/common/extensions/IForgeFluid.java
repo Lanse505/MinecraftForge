@@ -26,7 +26,8 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.tags.Tag;
+import net.minecraft.pathfinding.PathType;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -109,6 +110,22 @@ public interface IForgeFluid
     default boolean canRenderInLayer(FluidState state, RenderType layer)
     {
         return RenderTypeLookup.canRenderInLayer(state, layer);
+    }
+
+    /**
+     * FluidStack-Sensitive method for dealing with pathing through custom fluids for use with {@link net.minecraft.block.AbstractBlock#allowsMovement(BlockState, IBlockReader, BlockPos, PathType)}
+     * Defaults to if the fluid is tagged as Water to keep with vanilla behaviour.
+     * Override this to allow entities to Path through your fluid.
+     *
+     * @param state The current FluidState
+     * @param world The current World
+     * @param pos The current Pos
+     * @return Returns if the fluid is traversable
+     */
+    @SuppressWarnings("deprecation")
+    default boolean allowsMovement(FluidState state, IBlockReader world, BlockPos pos)
+    {
+        return state.isTagged(FluidTags.WATER);
     }
 
     /**

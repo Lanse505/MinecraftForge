@@ -25,7 +25,8 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.tags.Tag;
+import net.minecraft.pathfinding.PathType;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
@@ -77,5 +78,18 @@ public interface IForgeFluidState
     default boolean canRenderInLayer(RenderType layer)
     {
         return getFluidState().getFluid().canRenderInLayer(getFluidState(), layer);
+    }
+
+    /**
+     * Fluid-Sensitive method for dealing with pathing through custom fluids for use with {@link net.minecraft.block.AbstractBlock#allowsMovement(BlockState, IBlockReader, BlockPos, PathType)}
+     *
+     * @param world The current World
+     * @param pos The current Pos
+     * @return Returns if the fluid is traversable
+     */
+    @SuppressWarnings("deprecation")
+    default boolean allowsMovement(IBlockReader world, BlockPos pos)
+    {
+        return getFluidState().allowsMovement(world, pos);
     }
 }
