@@ -19,11 +19,10 @@
 
 package net.minecraftforge.common.extensions;
 
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
@@ -107,11 +106,10 @@ public interface IForgeFluid
      * Queries if this fluid should render in a given layer.
      * A custom {@link IBakedModel} can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter the model based on layer.
      */
-    /* TODO: reimplement
-    default boolean canRenderInLayer(IFluidState state, BlockRenderLayer layer)
+    default boolean canRenderInLayer(FluidState state, RenderType layer)
     {
-        return this.getFluid().getRenderLayer() == layer;
-    }*/
+        return RenderTypeLookup.canRenderInLayer(state, layer);
+    }
 
     /**
      * Retrieves a list of tags names this is known to be associated with.

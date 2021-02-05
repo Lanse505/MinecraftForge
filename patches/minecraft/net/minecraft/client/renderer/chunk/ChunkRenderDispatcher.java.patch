@@ -110,7 +110,7 @@
 +                  net.minecraftforge.client.model.data.IModelData modelData = getModelData(blockpos2);
 +                  for (RenderType rendertype : RenderType.func_228661_n_()) {
 +                     net.minecraftforge.client.ForgeHooksClient.setRenderLayer(rendertype);
-+                  if (!fluidstate.func_206888_e() && RenderTypeLookup.canRenderInLayer(fluidstate, rendertype)) {
++                  if (!fluidstate.func_206888_e() && fluidstate.canRenderInLayer(rendertype)) {
                       BufferBuilder bufferbuilder = p_228940_5_.func_228366_a_(rendertype);
                       if (p_228940_4_.field_178501_c.add(rendertype)) {
                          ChunkRender.this.func_228923_a_(bufferbuilder);
