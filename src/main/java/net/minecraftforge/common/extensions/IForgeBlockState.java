@@ -721,19 +721,25 @@ public interface IForgeBlockState
      * @return the PathNodeType
      */
     @Nullable
-    default PathNodeType getAiPathNodeType(IBlockReader world, BlockPos pos)
+    default PathNodeType getPathNodeType(IBlockReader world, BlockPos pos)
     {
-        return getAiPathNodeType(world, pos, null);
+        return getPathNodeType(world, pos, null);
     }
 
     /**
-     *
-     * @return The Danger PathNodeType
+     * Queried for the Blocks Danger PathNodeType.
+     * Used to alter what the PathNodeType priority is for any adjacent blocks.
+     * Negative Values = Untraversable
+     * 0 = Best
+     * Highest = Worst
+     * @param world The World being Queried.
+     * @param pos The BlockPos being Queried.
+     * @return Null for default behaviour. Returns the Danger PathNodeType for the Block for Pathfinding purposes.
      */
     @Nullable
-    default PathNodeType getAiDangerPathNodeType(IBlockReader world, BlockPos pos)
+    default PathNodeType getDangerModifierType(IBlockReader world, BlockPos pos)
     {
-        return getBlockState().getBlock().getAiDangerPathNodeType(getBlockState(), world, pos, null);
+        return getBlockState().getBlock().getDangerModifierType(getBlockState(), world, pos, null);
     }
 
     /**
@@ -742,19 +748,26 @@ public interface IForgeBlockState
      * @return the PathNodeType
      */
     @Nullable
-    default PathNodeType getAiPathNodeType(IBlockReader world, BlockPos pos, @Nullable MobEntity entity)
+    default PathNodeType getPathNodeType(IBlockReader world, BlockPos pos, @Nullable MobEntity entity)
     {
-        return getBlockState().getBlock().getAiPathNodeType(getBlockState(), world, pos, entity);
+        return getBlockState().getBlock().getPathNodeType(getBlockState(), world, pos, entity);
     }
 
     /**
-     *
-     * @return The Danger PathNodeType
+     * Queried for the Blocks Danger {@code PathNodeType} Modifier.
+     * Used to alter what the {@code PathNodeType} priority is for any adjacent blocks.
+     * Negative Values = Untraversable
+     * 0 = Best
+     * Highest = Worst
+     * @param world The World being Queried.
+     * @param pos The BlockPos being Queried.
+     * @param entity The current entity querying. Can be {@code null}.
+     * @return {@code null} for default behaviour. Returns the Danger {@code PathNodeType} for the Block for Pathfinding purposes.
      */
     @Nullable
-    default PathNodeType getAiDangerPathNodeType(IBlockReader world, BlockPos pos, @Nullable MobEntity entity)
+    default PathNodeType getDangerModifierType(IBlockReader world, BlockPos pos, @Nullable MobEntity entity)
     {
-        return getBlockState().getBlock().getAiDangerPathNodeType(getBlockState(), world, pos, entity);
+        return getBlockState().getBlock().getDangerModifierType(getBlockState(), world, pos, entity);
     }
 
     /**

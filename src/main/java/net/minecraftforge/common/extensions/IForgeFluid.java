@@ -55,12 +55,11 @@ public interface IForgeFluid
      * @param pos position thats being tested.
      * @param entity that is being tested.
      * @param yToTest, primarily for testingHead, which sends the the eye level of the entity, other wise it sends a y that can be tested vs liquid height.
-     * @param tag Fluid category
      * @param testingHead when true, its testing the entities head for vision, breathing ect... otherwise its testing the body, for swimming and movement adjustment.
      */
-    default boolean isEntityInside(FluidState state, IWorldReader world, BlockPos pos, Entity entity, double yToTest, Tag<Fluid> tag, boolean testingHead)
+    default boolean isEntityInside(FluidState state, IWorldReader world, BlockPos pos, Entity entity, double yToTest, boolean testingHead)
     {
-        return state.isTagged(tag) && yToTest < (double)(pos.getY() + state.getActualHeight(world, pos) + 0.11111111F);
+        return testingHead ? entity.getEyeHeight(entity.getPose()) < (double) (pos.getY() + state.getActualHeight(world, pos)) + 0.11111111F : yToTest < (double)(pos.getY() + state.getActualHeight(world, pos) + 0.11111111F);
     }
 
     /**
@@ -90,7 +89,7 @@ public interface IForgeFluid
     @Nullable
     default Boolean isAABBInsideLiquid(FluidState state, IWorldReader world, BlockPos pos, AxisAlignedBB boundingBox)
     {
-        return null;
+        return boundingBox.intersects(AxisAlignedBB.fromVector(state.getFlow(world, pos)));
     }
 
     /**
@@ -117,13 +116,13 @@ public interface IForgeFluid
     }
 
     /**
-     * Queried for the Fluids Base PathNodeType.
+     * Queried for the Fluids Base {@code PathNodeType}.
      * Used to determine what the PathNode priority value is for the fluid.
      * Negative Values = Untraversable
      * 0 = Best
      * Highest = Worst
      * @param state The current FluidState.
-     * @return Null for default behaviour. Returns the PathNodeType for the Fluid for Pathfinding purposes.
+     * @return {@code null} for default behaviour. Returns the PathNodeType for the Fluid for Pathfinding purposes.
      */
     @Nullable
     default PathNodeType getPathNodeType(FluidState state) {
@@ -131,18 +130,19 @@ public interface IForgeFluid
     }
 
     /**
-     * Queried for the Fluids Danger PathNodeType.
-     * Used to alter what the PathNodeType priority is for any adjacent blocks.
+     * Queried for the Fluids Danger {@code PathNodeType}.
+     * Used to alter what the {@code PathNodeType} priority is for any adjacent blocks.
      * Negative Values = Untraversable
      * 0 = Best
      * Highest = Worst
      * @param state The current FluidState.
-     * @return Null for default behaviour. Returns the Danger PathNodeType for the Fluid for Pathfinding purposes.
+     * @return {@code null} for default behaviour. Returns the Danger PathNodeType for the Fluid for Pathfinding purposes.
      */
     @Nullable
-    default PathNodeType getAiDangerPathNodeType(FluidState state) {
+    default PathNodeType getDangerModifierType(FluidState state) {
         return null;
     }
+
 
     /**
      * Retrieves a list of tags names this is known to be associated with.

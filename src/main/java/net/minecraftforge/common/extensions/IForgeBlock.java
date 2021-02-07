@@ -702,17 +702,25 @@ public interface IForgeBlock
      * @return the PathNodeType
      */
     @Nullable
-    default PathNodeType getAiPathNodeType(BlockState state, IBlockReader world, BlockPos pos, @Nullable MobEntity entity)
+    default PathNodeType getPathNodeType(BlockState state, IBlockReader world, BlockPos pos, @Nullable MobEntity entity)
     {
         return state.getBlock() == Blocks.LAVA ? PathNodeType.LAVA : state.isBurning(world, pos) ? PathNodeType.DAMAGE_FIRE : null;
     }
 
     /**
-     *
-     * @return
+     * Queried for the Blocks Danger {@code PathNodeType} Modifier.
+     * Used to alter what the {@code PathNodeType} priority is for any adjacent blocks.
+     * Negative Values = Untraversable
+     * 0 = Best
+     * Highest = Worst
+     * @param state The current BlockState.
+     * @param world The World being Queried.
+     * @param pos The BlockPos being Queried.
+     * @param entity The current entity querying. Can be Null.
+     * @return {@code null} for default behaviour. Returns the Danger {@code PathNodeType} for the Block for Pathfinding purposes.
      */
     @Nullable
-    default PathNodeType getAiDangerPathNodeType(BlockState state, IBlockReader world, BlockPos pos, @Nullable MobEntity entity)
+    default PathNodeType getDangerModifierType(BlockState state, IBlockReader world, BlockPos pos, @Nullable MobEntity entity)
     {
         return null;
     }

@@ -86,7 +86,7 @@ public class FluidTraversabilityTest
 
         @Nullable
         @Override
-        public PathNodeType getAiDangerPathNodeType(FluidState state) {
+        public PathNodeType getDangerModifierType(FluidState state) {
             return PathNodeType.DANGER_OTHER;
         }
     }

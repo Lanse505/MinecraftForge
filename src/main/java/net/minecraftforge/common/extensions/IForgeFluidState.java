@@ -23,7 +23,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -49,16 +48,42 @@ public interface IForgeFluidState
      * @param pos position thats being tested.
      * @param entity that is being tested.
      * @param yToTest, primarily for testingHead, which sends the the eye level of the entity, other wise it sends a y that can be tested vs liquid height.
-     * @param tag to test for.
      * @param testingHead when true, its testing the entities head for vision, breathing ect... otherwise its testing the body, for swimming and movement adjustment.
      */
-    default boolean isEntityInside(IWorldReader world, BlockPos pos, Entity entity, double yToTest, Tag<Fluid> tag, boolean testingHead)
+    default boolean isEntityInside(IWorldReader world, BlockPos pos, Entity entity, double yToTest, boolean testingHead)
     {
-//        return ifluidstate.isTagged(p_213290_1_) && d0 < (double)((float)blockpos.getY() + ifluidstate.getActualHeight(this.world, blockpos) + 0.11111111F);
-        return getFluidState().getFluid().isEntityInside(getFluidState(), world, pos, entity, yToTest, tag, testingHead);
+        return getFluidState().getFluid().isEntityInside(getFluidState(), world, pos, entity, yToTest, testingHead);
     }
 
+    /**
+     * Called when boats or fishing hooks are inside the block to check if they are inside
+     * the material requested.
+     *
+     * @param world world that is being tested.
+     * @param pos block thats being tested.
+     * @param boundingBox box to test, generally the bounds of an entity that are besting tested.
+     * @param materialIn to check for.
+     * @return null for default behavior, true if the box is within the material, false if it was not.
+     */
+    @Nullable
+    default Boolean isAABBInsideMaterial(IWorldReader world, BlockPos pos, AxisAlignedBB boundingBox, Material materialIn)
+    {
+        return getFluidState().getFluid().isAABBInsideMaterial(getFluidState(), world, pos, boundingBox, materialIn);
+    }
 
+    /**
+     * Called when entities are moving to check if they are inside a liquid
+     *
+     * @param world world that is being tested.
+     * @param pos block thats being tested.
+     * @param boundingBox box to test, generally the bounds of an entity that are besting tested.
+     * @return null for default behavior, true if the box is within the material, false if it was not.
+     */
+    @Nullable
+    default Boolean isAABBInsideLiquid(IWorldReader world, BlockPos pos, AxisAlignedBB boundingBox)
+    {
+        return getFluidState().getFluid().isAABBInsideLiquid(getFluidState(), world, pos, boundingBox);
+    }
 
     /**
      * Location sensitive version of getExplosionResistance
@@ -104,7 +129,7 @@ public interface IForgeFluidState
      * @return Null for default behaviour. Returns the Danger PathNodeType for the Fluid for Pathfinding purposes.
      */
     @Nullable
-    default PathNodeType getAiDangerPathNodeType() {
-        return getFluidState().getFluid().getAiDangerPathNodeType(getFluidState());
+    default PathNodeType getDangerModifierType() {
+        return getFluidState().getFluid().getDangerModifierType(getFluidState());
     }
 }

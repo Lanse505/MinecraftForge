@@ -33,6 +33,7 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.ItemFrameEntity;
 import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 import net.minecraft.entity.item.PaintingEntity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.Items;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.item.ItemStack;
@@ -192,4 +193,20 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
      * the entity to react to being revived.
      */
     void revive();
+
+
+    /**
+     * @return Returns true if the entity is currently inside of any FluidState.
+     */
+    default boolean isInFluid() {
+        return getEntity().fluidInsideOf != null;
+    }
+
+    /**
+     * @return Returns the FluidState that the entity is currently inside of.
+     */
+    @Nullable
+    default FluidState getFluidStateIn() {
+        return getEntity().isInFluid() ? getEntity().fluidInsideOf : null;
+    }
 }
