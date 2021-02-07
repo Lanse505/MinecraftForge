@@ -4,11 +4,11 @@
                       return PathNodeType.DANGER_FIRE;
                    }
  
-+                  if (blockstate.getAiDangerPathNodeType(p_237232_0_, p_237232_1_) != null) return blockstate.getAiDangerPathNodeType(p_237232_0_, p_237232_1_);
++                  if (blockstate.getDangerModifierType(p_237232_0_, p_237232_1_) != null) return blockstate.getDangerModifierType(p_237232_0_, p_237232_1_);
                    if (p_237232_0_.func_204610_c(p_237232_1_).func_206884_a(FluidTags.field_206959_a)) {
                       return PathNodeType.WATER_BORDER;
                    }
-+                  if (p_237232_0_.func_204610_c(p_237232_1_).getAiDangerPathNodeType() != null) return p_237232_0_.func_204610_c(p_237232_1_).getAiDangerPathNodeType();
++                  if (p_237232_0_.func_204610_c(p_237232_1_).getDangerModifierType() != null) return p_237232_0_.func_204610_c(p_237232_1_).getDangerModifierType();
                 }
              }
           }
@@ -16,7 +16,7 @@
  
     protected static PathNodeType func_237238_b_(IBlockReader p_237238_0_, BlockPos p_237238_1_) {
        BlockState blockstate = p_237238_0_.func_180495_p(p_237238_1_);
-+      PathNodeType type = blockstate.getAiPathNodeType(p_237238_0_, p_237238_1_);
++      PathNodeType type = blockstate.getPathNodeType(p_237238_0_, p_237238_1_);
 +      if (type != null) return type;
        Block block = blockstate.func_177230_c();
        Material material = blockstate.func_185904_a();
