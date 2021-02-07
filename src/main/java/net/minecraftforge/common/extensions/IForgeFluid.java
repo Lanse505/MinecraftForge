@@ -26,6 +26,7 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.pathfinding.PathType;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ResourceLocation;
@@ -35,6 +36,9 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.fluids.FluidAttributes;
+
+import javax.annotation.Nullable;
+import java.util.Set;
 
 public interface IForgeFluid
 {
@@ -72,7 +76,7 @@ public interface IForgeFluid
     @Nullable
     default Boolean isAABBInsideMaterial(FluidState state, IWorldReader world, BlockPos pos, AxisAlignedBB boundingBox, Material materialIn)
     {
-        return null;
+        return state.getBlockState().getMaterial() == materialIn && boundingBox.intersects(AxisAlignedBB.fromVector(state.getFlow(world, pos)));
     }
 
     /**
@@ -113,19 +117,31 @@ public interface IForgeFluid
     }
 
     /**
-     * FluidStack-Sensitive method for dealing with pathing through custom fluids for use with {@link net.minecraft.block.AbstractBlock#allowsMovement(BlockState, IBlockReader, BlockPos, PathType)}
-     * Defaults to if the fluid is tagged as Water to keep with vanilla behaviour.
-     * Override this to allow entities to Path through your fluid.
-     *
-     * @param state The current FluidState
-     * @param world The current World
-     * @param pos The current Pos
-     * @return Returns if the fluid is traversable
+     * Queried for the Fluids Base PathNodeType.
+     * Used to determine what the PathNode priority value is for the fluid.
+     * Negative Values = Untraversable
+     * 0 = Best
+     * Highest = Worst
+     * @param state The current FluidState.
+     * @return Null for default behaviour. Returns the PathNodeType for the Fluid for Pathfinding purposes.
      */
-    @SuppressWarnings("deprecation")
-    default boolean allowsMovement(FluidState state, IBlockReader world, BlockPos pos)
-    {
-        return state.isTagged(FluidTags.WATER);
+    @Nullable
+    default PathNodeType getPathNodeType(FluidState state) {
+        return null;
+    }
+
+    /**
+     * Queried for the Fluids Danger PathNodeType.
+     * Used to alter what the PathNodeType priority is for any adjacent blocks.
+     * Negative Values = Untraversable
+     * 0 = Best
+     * Highest = Worst
+     * @param state The current FluidState.
+     * @return Null for default behaviour. Returns the Danger PathNodeType for the Fluid for Pathfinding purposes.
+     */
+    @Nullable
+    default PathNodeType getAiDangerPathNodeType(FluidState state) {
+        return null;
     }
 
     /**

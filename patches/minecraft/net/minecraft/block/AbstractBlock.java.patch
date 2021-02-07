@@ -19,15 +19,6 @@
     }
  
     @Deprecated
-@@ -99,7 +102,7 @@
-       case LAND:
-          return !p_196266_1_.func_235785_r_(p_196266_2_, p_196266_3_);
-       case WATER:
--         return p_196266_2_.func_204610_c(p_196266_3_).func_206884_a(FluidTags.field_206959_a);
-+         return p_196266_2_.func_204610_c(p_196266_3_).allowsMovement(p_196266_2_, p_196266_3_);
-       case AIR:
-          return !p_196266_1_.func_235785_r_(p_196266_2_, p_196266_3_);
-       default:
 @@ -129,7 +132,7 @@
  
     @Deprecated

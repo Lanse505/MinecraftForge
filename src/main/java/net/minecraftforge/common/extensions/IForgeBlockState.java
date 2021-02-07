@@ -727,6 +727,16 @@ public interface IForgeBlockState
     }
 
     /**
+     *
+     * @return The Danger PathNodeType
+     */
+    @Nullable
+    default PathNodeType getAiDangerPathNodeType(IBlockReader world, BlockPos pos)
+    {
+        return getBlockState().getBlock().getAiDangerPathNodeType(getBlockState(), world, pos, null);
+    }
+
+    /**
      * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
      *
      * @return the PathNodeType
@@ -735,6 +745,16 @@ public interface IForgeBlockState
     default PathNodeType getAiPathNodeType(IBlockReader world, BlockPos pos, @Nullable MobEntity entity)
     {
         return getBlockState().getBlock().getAiPathNodeType(getBlockState(), world, pos, entity);
+    }
+
+    /**
+     *
+     * @return The Danger PathNodeType
+     */
+    @Nullable
+    default PathNodeType getAiDangerPathNodeType(IBlockReader world, BlockPos pos, @Nullable MobEntity entity)
+    {
+        return getBlockState().getBlock().getAiDangerPathNodeType(getBlockState(), world, pos, entity);
     }
 
     /**

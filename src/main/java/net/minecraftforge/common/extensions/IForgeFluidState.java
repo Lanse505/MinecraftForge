@@ -25,12 +25,14 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.pathfinding.PathType;
+import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
+
+import javax.annotation.Nullable;
 
 public interface IForgeFluidState
 {
@@ -81,15 +83,28 @@ public interface IForgeFluidState
     }
 
     /**
-     * Fluid-Sensitive method for dealing with pathing through custom fluids for use with {@link net.minecraft.block.AbstractBlock#allowsMovement(BlockState, IBlockReader, BlockPos, PathType)}
-     *
-     * @param world The current World
-     * @param pos The current Pos
-     * @return Returns if the fluid is traversable
+     * Queried for the Fluids Base PathNodeType.
+     * Used to determine what the PathNode priority value is for the fluid.
+     * Negative Values = Untraversable
+     * 0 = Best
+     * Highest = Worst
+     * @return Null for default behaviour. Returns the PathNodeType for the Fluid for Pathfinding purposes.
      */
-    @SuppressWarnings("deprecation")
-    default boolean allowsMovement(IBlockReader world, BlockPos pos)
-    {
-        return getFluidState().allowsMovement(world, pos);
+    @Nullable
+    default PathNodeType getPathNodeType() {
+        return getFluidState().getFluid().getPathNodeType(getFluidState());
+    }
+
+    /**
+     * Queried for the Fluids Danger PathNodeType.
+     * Used to alter what the PathNodeType priority is for any adjacent blocks.
+     * Negative Values = Untraversable
+     * 0 = Best
+     * Highest = Worst
+     * @return Null for default behaviour. Returns the Danger PathNodeType for the Fluid for Pathfinding purposes.
+     */
+    @Nullable
+    default PathNodeType getAiDangerPathNodeType() {
+        return getFluidState().getFluid().getAiDangerPathNodeType(getFluidState());
     }
 }

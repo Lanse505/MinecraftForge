@@ -708,6 +708,16 @@ public interface IForgeBlock
     }
 
     /**
+     *
+     * @return
+     */
+    @Nullable
+    default PathNodeType getAiDangerPathNodeType(BlockState state, IBlockReader world, BlockPos pos, @Nullable MobEntity entity)
+    {
+        return null;
+    }
+
+    /**
      * @param state The state
      * @return true if the block is sticky block which used for pull or push adjacent blocks (use by piston)
      */

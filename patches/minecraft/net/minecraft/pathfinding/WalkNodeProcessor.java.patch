@@ -1,6 +1,18 @@
 --- a/net/minecraft/pathfinding/WalkNodeProcessor.java
 +++ b/net/minecraft/pathfinding/WalkNodeProcessor.java
-@@ -463,9 +463,11 @@
+@@ -450,9 +450,11 @@
+                      return PathNodeType.DANGER_FIRE;
+                   }
+ 
++                  if (blockstate.getAiDangerPathNodeType(p_237232_0_, p_237232_1_) != null) return blockstate.getAiDangerPathNodeType(p_237232_0_, p_237232_1_);
+                   if (p_237232_0_.func_204610_c(p_237232_1_).func_206884_a(FluidTags.field_206959_a)) {
+                      return PathNodeType.WATER_BORDER;
+                   }
++                  if (p_237232_0_.func_204610_c(p_237232_1_).getAiDangerPathNodeType() != null) return p_237232_0_.func_204610_c(p_237232_1_).getAiDangerPathNodeType();
+                }
+             }
+          }
+@@ -463,9 +465,11 @@
  
     protected static PathNodeType func_237238_b_(IBlockReader p_237238_0_, BlockPos p_237238_1_) {
        BlockState blockstate = p_237238_0_.func_180495_p(p_237238_1_);
@@ -13,3 +25,11 @@
           return PathNodeType.OPEN;
        } else if (!blockstate.func_235714_a_(BlockTags.field_212185_E) && !blockstate.func_203425_a(Blocks.field_196651_dG)) {
           if (blockstate.func_203425_a(Blocks.field_150434_aF)) {
+@@ -478,6 +482,7 @@
+             return PathNodeType.COCOA;
+          } else {
+             FluidState fluidstate = p_237238_0_.func_204610_c(p_237238_1_);
++            if (fluidstate.getPathNodeType() != null) return fluidstate.getPathNodeType();
+             if (fluidstate.func_206884_a(FluidTags.field_206959_a)) {
+                return PathNodeType.WATER;
+             } else if (fluidstate.func_206884_a(FluidTags.field_206960_b)) {
