@@ -34,6 +34,7 @@ import net.minecraft.entity.item.ItemFrameEntity;
 import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 import net.minecraft.entity.item.PaintingEntity;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.Items;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.item.ItemStack;
@@ -199,7 +200,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
      * @return Returns true if the entity is currently inside of any FluidState.
      */
     default boolean isInFluid() {
-        return getEntity().fluidInsideOf != null;
+        return getEntity().fluidInsideOf != null && getEntity().fluidInsideOf.getFluid() != Fluids.EMPTY;
     }
 
     /**
@@ -207,6 +208,6 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
      */
     @Nullable
     default FluidState getFluidStateIn() {
-        return getEntity().isInFluid() ? getEntity().fluidInsideOf : null;
+        return getEntity().fluidInsideOf;
     }
 }

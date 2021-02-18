@@ -26,9 +26,8 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.pathfinding.PathNodeType;
-import net.minecraft.pathfinding.PathType;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -59,7 +58,7 @@ public interface IForgeFluid
      */
     default boolean isEntityInside(FluidState state, IWorldReader world, BlockPos pos, Entity entity, double yToTest, boolean testingHead)
     {
-        return testingHead ? entity.getEyeHeight(entity.getPose()) < (double) (pos.getY() + state.getActualHeight(world, pos)) + 0.11111111F : yToTest < (double)(pos.getY() + state.getActualHeight(world, pos) + 0.11111111F);
+        return getFluid() != Fluids.EMPTY && (testingHead ? entity.getEyeHeight(entity.getPose()) < (double) (pos.getY() + state.getActualHeight(world, pos)) + 0.11111111F : yToTest < (double) (pos.getY() + state.getActualHeight(world, pos) + 0.11111111F));
     }
 
     /**
@@ -75,7 +74,7 @@ public interface IForgeFluid
     @Nullable
     default Boolean isAABBInsideMaterial(FluidState state, IWorldReader world, BlockPos pos, AxisAlignedBB boundingBox, Material materialIn)
     {
-        return state.getBlockState().getMaterial() == materialIn && boundingBox.intersects(AxisAlignedBB.fromVector(state.getFlow(world, pos)));
+        return getFluid() != Fluids.EMPTY && state.getBlockState().getMaterial() == materialIn && boundingBox.intersects(AxisAlignedBB.fromVector(state.getFlow(world, pos)));
     }
 
     /**
@@ -89,7 +88,7 @@ public interface IForgeFluid
     @Nullable
     default Boolean isAABBInsideLiquid(FluidState state, IWorldReader world, BlockPos pos, AxisAlignedBB boundingBox)
     {
-        return boundingBox.intersects(AxisAlignedBB.fromVector(state.getFlow(world, pos)));
+        return getFluid() != Fluids.EMPTY && boundingBox.intersects(AxisAlignedBB.fromVector(state.getFlow(world, pos)));
     }
 
     /**
@@ -126,7 +125,7 @@ public interface IForgeFluid
      */
     @Nullable
     default PathNodeType getPathNodeType(FluidState state) {
-        return null;
+        return PathNodeType.WATER;
     }
 
     /**

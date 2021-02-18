@@ -37,6 +37,24 @@
              this.field_71174_a.func_147297_a(new CEntityActionPacket(this, CEntityActionPacket.Action.START_FALL_FLYING));
           }
        }
+@@ -677,7 +684,7 @@
+          this.func_203010_cG();
+       }
+ 
+-      if (this.func_208600_a(FluidTags.field_206959_a)) {
++      if (this.func_208600_a(FluidTags.field_206959_a) || this.fluidInsideOf != null) {
+          int i = this.func_175149_v() ? 10 : 1;
+          this.field_203720_cz = MathHelper.func_76125_a(this.field_203720_cz + i, 0, 600);
+       } else if (this.field_203720_cz > 0) {
+@@ -926,7 +933,7 @@
+    }
+ 
+    public float func_203719_J() {
+-      if (!this.func_208600_a(FluidTags.field_206959_a)) {
++      if (!this.func_208600_a(FluidTags.field_206959_a) || !this.isInFluid()) {
+          return 0.0F;
+       } else {
+          float f = 600.0F;
 @@ -975,4 +982,16 @@
           return super.func_241843_o(p_241843_1_);
        }
