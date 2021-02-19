@@ -23,18 +23,21 @@
     public boolean field_70128_L;
     public float field_70141_P;
     public float field_70140_Q;
-@@ -193,8 +195,10 @@
-    private long field_191506_aJ;
+@@ -194,7 +196,13 @@
     private EntitySize field_213325_aI;
     private float field_213326_aJ;
-+   public FluidState fluidInsideOf = null;
  
++   /* ==== FORGE START ==== */
++   public FluidState fluidInsideOf = null;
++   public it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap<FluidState> customEyeFluidLevelMap = new it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap<>();
++   /* ==== FORGE END ==== */
++
     public Entity(EntityType<?> p_i48580_1_, World p_i48580_2_) {
 +      super(Entity.class);
        this.field_200606_g = p_i48580_1_;
        this.field_70170_p = p_i48580_2_;
        this.field_213325_aI = p_i48580_1_.func_220334_j();
-@@ -211,7 +215,11 @@
+@@ -211,7 +219,11 @@
        this.field_70180_af.func_187214_a(field_189655_aD, false);
        this.field_70180_af.func_187214_a(field_213330_X, Pose.STANDING);
        this.func_70088_a();
@@ -47,7 +50,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -317,7 +325,13 @@
+@@ -317,7 +329,13 @@
     }
  
     public void func_70106_y() {
@@ -61,7 +64,7 @@
     }
  
     public void func_213301_b(Pose p_213301_1_) {
-@@ -330,6 +344,7 @@
+@@ -330,6 +348,7 @@
  
     public boolean func_233562_a_(Entity p_233562_1_, double p_233562_2_) {
        double d0 = p_233562_1_.field_233557_ao_.field_72450_a - this.field_233557_ao_.field_72450_a;
@@ -69,7 +72,17 @@
        double d1 = p_233562_1_.field_233557_ao_.field_72448_b - this.field_233557_ao_.field_72448_b;
        double d2 = p_233562_1_.field_233557_ao_.field_72449_c - this.field_233557_ao_.field_72449_c;
        return d0 * d0 + d1 * d1 + d2 * d2 < p_233562_2_ * p_233562_2_;
-@@ -560,7 +575,7 @@
+@@ -392,6 +411,9 @@
+       }
+ 
+       this.func_233566_aG_();
++      if (isInFluid() && fluidInsideOf.handleFluidAcceleration(this)) {
++         if (fluidInsideOf.func_206886_c().getAttributes().shouldExtinguishFlames()) this.func_70066_B();
++      }
+       this.func_205012_q();
+       this.func_205343_av();
+       if (this.field_70170_p.field_72995_K) {
+@@ -560,7 +582,7 @@
  
              this.field_70140_Q = (float)((double)this.field_70140_Q + (double)MathHelper.func_76133_a(func_213296_b(vector3d)) * 0.6D);
              this.field_82151_R = (float)((double)this.field_82151_R + (double)MathHelper.func_76133_a(d0 * d0 + d1 * d1 + d2 * d2) * 0.6D);
@@ -78,7 +91,7 @@
                 this.field_70150_b = this.func_203009_ad();
                 if (this.func_70090_H()) {
                    Entity entity = this.func_184207_aI() && this.func_184179_bs() != null ? this.func_184179_bs() : this;
-@@ -575,7 +590,7 @@
+@@ -575,7 +597,7 @@
                 } else {
                    this.func_180429_a(blockpos, blockstate);
                 }
@@ -87,7 +100,7 @@
                 this.field_191959_ay = this.func_191954_d(this.field_82151_R);
              }
           }
-@@ -591,8 +606,9 @@
+@@ -591,8 +613,9 @@
  
           float f2 = this.func_225515_ai_();
           this.func_213317_d(this.func_213322_ci().func_216372_d((double)f2, 1.0D, (double)f2));
@@ -99,7 +112,7 @@
           }) && this.field_190534_ay <= 0) {
              this.func_241209_g_(-this.func_190531_bD());
           }
-@@ -611,11 +627,10 @@
+@@ -611,11 +634,10 @@
        int j = MathHelper.func_76128_c(this.field_233557_ao_.field_72448_b - (double)0.2F);
        int k = MathHelper.func_76128_c(this.field_233557_ao_.field_72449_c);
        BlockPos blockpos = new BlockPos(i, j, k);
@@ -113,7 +126,7 @@
              return blockpos1;
           }
        }
-@@ -801,6 +816,7 @@
+@@ -801,6 +823,7 @@
     public void func_174829_m() {
        AxisAlignedBB axisalignedbb = this.func_174813_aQ();
        this.func_226288_n_((axisalignedbb.field_72340_a + axisalignedbb.field_72336_d) / 2.0D, axisalignedbb.field_72338_b, (axisalignedbb.field_72339_c + axisalignedbb.field_72334_f) / 2.0D);
@@ -121,7 +134,7 @@
     }
  
     protected SoundEvent func_184184_Z() {
-@@ -849,7 +865,7 @@
+@@ -849,7 +872,7 @@
     protected void func_180429_a(BlockPos p_180429_1_, BlockState p_180429_2_) {
        if (!p_180429_2_.func_185904_a().func_76224_d()) {
           BlockState blockstate = this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a());
@@ -130,7 +143,16 @@
           this.func_184185_a(soundtype.func_185844_d(), soundtype.func_185843_a() * 0.15F, soundtype.func_185847_b());
        }
     }
-@@ -1056,9 +1072,10 @@
+@@ -946,7 +969,7 @@
+    }
+ 
+    public boolean func_204231_K() {
+-      return this.field_205013_W && this.func_70090_H();
++      return this.field_205013_W && this.func_70090_H() || this.isInFluid() && getFluidStateIn().isEntityInside(field_70170_p, field_233558_ap_, this, this.func_226280_cw_(), true);
+    }
+ 
+    public void func_205343_av() {
+@@ -1056,9 +1079,10 @@
        int k = MathHelper.func_76128_c(this.func_226281_cx_());
        BlockPos blockpos = new BlockPos(i, j, k);
        BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
@@ -142,7 +164,7 @@
        }
  
     }
-@@ -1377,6 +1394,7 @@
+@@ -1377,6 +1401,7 @@
           if (this.field_184238_ar) {
              p_189511_1_.func_74757_a("Glowing", this.field_184238_ar);
           }
@@ -150,7 +172,7 @@
  
           if (!this.field_184236_aF.isEmpty()) {
              ListNBT listnbt = new ListNBT();
-@@ -1388,6 +1406,10 @@
+@@ -1388,6 +1413,10 @@
              p_189511_1_.func_218657_a("Tags", listnbt);
           }
  
@@ -161,7 +183,7 @@
           this.func_213281_b(p_189511_1_);
           if (this.func_184207_aI()) {
              ListNBT listnbt1 = new ListNBT();
-@@ -1458,6 +1480,9 @@
+@@ -1458,6 +1487,9 @@
                 this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
                 this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));
                 this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
@@ -171,7 +193,7 @@
                 if (p_70020_1_.func_150297_b("Tags", 9)) {
                    this.field_184236_aF.clear();
                    ListNBT listnbt3 = p_70020_1_.func_150295_c("Tags", 8);
-@@ -1546,6 +1571,8 @@
+@@ -1546,6 +1578,8 @@
        } else {
           ItemEntity itementity = new ItemEntity(this.field_70170_p, this.func_226277_ct_(), this.func_226278_cu_() + (double)p_70099_2_, this.func_226281_cx_(), p_70099_1_);
           itementity.func_174869_p();
@@ -180,7 +202,7 @@
           this.field_70170_p.func_217376_c(itementity);
           return itementity;
        }
-@@ -1582,6 +1609,7 @@
+@@ -1582,6 +1616,7 @@
  
     public void func_70098_U() {
        this.func_213317_d(Vector3d.field_186680_a);
@@ -188,7 +210,7 @@
        this.func_70071_h_();
        if (this.func_184218_aH()) {
           this.func_184187_bx().func_184232_k(this);
-@@ -1627,6 +1655,7 @@
+@@ -1627,6 +1662,7 @@
           }
        }
  
@@ -196,7 +218,7 @@
        if (p_184205_2_ || this.func_184228_n(p_184205_1_) && p_184205_1_.func_184219_q(this)) {
           if (this.func_184218_aH()) {
              this.func_184210_p();
-@@ -1659,6 +1688,7 @@
+@@ -1659,6 +1695,7 @@
     public void func_233575_bb_() {
        if (this.field_184239_as != null) {
           Entity entity = this.field_184239_as;
@@ -204,7 +226,7 @@
           this.field_184239_as = null;
           entity.func_184225_p(this);
        }
-@@ -1816,6 +1846,7 @@
+@@ -1816,6 +1853,7 @@
        return !this.func_184188_bt().isEmpty();
     }
  
@@ -212,7 +234,7 @@
     public boolean func_205710_ba() {
        return true;
     }
-@@ -2032,7 +2063,7 @@
+@@ -2032,7 +2070,7 @@
     }
  
     protected ITextComponent func_225513_by_() {
@@ -221,7 +243,7 @@
     }
  
     public boolean func_70028_i(Entity p_70028_1_) {
-@@ -2087,14 +2118,19 @@
+@@ -2087,14 +2125,19 @@
  
     @Nullable
     public Entity func_241206_a_(ServerWorld p_241206_1_) {
@@ -242,7 +264,7 @@
              this.field_70170_p.func_217381_Z().func_219895_b("reloading");
              Entity entity = this.func_200600_R().func_200721_a(p_241206_1_);
              if (entity != null) {
-@@ -2102,17 +2138,19 @@
+@@ -2102,17 +2145,19 @@
                 entity.func_70012_b(portalinfo.field_222505_a.field_72450_a, portalinfo.field_222505_a.field_72448_b, portalinfo.field_222505_a.field_72449_c, portalinfo.field_242960_c, entity.field_70125_A);
                 entity.func_213317_d(portalinfo.field_222506_b);
                 p_241206_1_.func_217460_e(entity);
@@ -264,7 +286,7 @@
           }
        } else {
           return null;
-@@ -2320,9 +2358,10 @@
+@@ -2320,9 +2365,10 @@
     public void func_213323_x_() {
        EntitySize entitysize = this.field_213325_aI;
        Pose pose = this.func_213283_Z();
@@ -277,7 +299,7 @@
        if (entitysize1.field_220315_a < entitysize.field_220315_a) {
           double d0 = (double)entitysize1.field_220315_a / 2.0D;
           this.func_174826_a(new AxisAlignedBB(this.func_226277_ct_() - d0, this.func_226278_cu_(), this.func_226281_cx_() - d0, this.func_226277_ct_() + d0, this.func_226278_cu_() + (double)entitysize1.field_220316_b, this.func_226281_cx_() + d0));
-@@ -2697,6 +2736,7 @@
+@@ -2697,6 +2743,7 @@
              this.func_213317_d(this.func_213322_ci().func_178787_e(vector3d));
           }
  
@@ -285,7 +307,7 @@
           this.field_233554_M_.put(p_210500_1_, d0);
           return flag1;
        }
-@@ -2796,6 +2836,7 @@
+@@ -2796,6 +2843,7 @@
  
           this.field_233555_aA_ = true;
        }
@@ -293,7 +315,7 @@
  
     }
  
-@@ -2811,4 +2852,63 @@
+@@ -2811,4 +2859,63 @@
     public interface IMoveCallback {
        void accept(Entity p_accept_1_, double p_accept_2_, double p_accept_4_, double p_accept_6_);
     }

@@ -22,16 +22,22 @@ package net.minecraftforge.fluids;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.*;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockDisplayReader;
 
 import java.util.function.BiFunction;
+import java.util.function.ToDoubleBiFunction;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
 import java.util.stream.Stream;
 
 import net.minecraft.entity.player.PlayerEntity;
@@ -130,6 +136,16 @@ public class FluidAttributes
      */
     private final int color;
 
+    /**
+     * Determines if entities should get extinguished if they are on fire when entering the Fluid.
+     */
+    private final boolean shouldExtinguishFlames;
+
+    /**
+     * The Fluid motion scale used in "fluid acceleration" calculations for "pushing" entities.
+     */
+    private final ToDoubleBiFunction<Entity, FluidState> motionScale;
+
     protected FluidAttributes(Builder builder, Fluid fluid)
     {
         this.translationKey = builder.translationKey != null ? builder.translationKey :  Util.makeTranslationKey("fluid", fluid.getRegistryName());
@@ -145,6 +161,8 @@ public class FluidAttributes
         this.density = builder.density;
         this.isGaseous = builder.isGaseous;
         this.rarity = builder.rarity;
+        this.shouldExtinguishFlames = builder.shouldExtinguishFlames;
+        this.motionScale = builder.motionScale;
     }
 
     public ItemStack getBucket(FluidStack stack)
@@ -181,7 +199,7 @@ public class FluidAttributes
      * Determines if this fluid should vaporize in dimensions where water vaporizes when placed.
      * To preserve the intentions of vanilla, fluids that can turn lava into obsidian should vaporize.
      * This prevents players from making the nether safe with a single bucket.
-     * Based on {@link net.minecraft.item.BucketItem#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos)}
+     * Based on {@link net.minecraft.item.BucketItem#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos, BlockRayTraceResult)}
      *
      * @param fluidStack The fluidStack is trying to be placed.
      * @return true if this fluid should vaporize in dimensions where water vaporizes when placed.
@@ -195,9 +213,9 @@ public class FluidAttributes
     }
 
     /**
-     * Called instead of placing the fluid block if {@link net.minecraft.world.dimension.Dimension#doesWaterVaporize()} and {@link #doesVaporize(FluidStack)} are true.
+     * Called instead of placing the fluid block if {@link net.minecraft.world.DimensionType#isUltrawarm()} and {@link #doesVaporize(IBlockDisplayReader, BlockPos, FluidStack)} are true.
      * Override this to make your explosive liquid blow up instead of the default smoke, etc.
-     * Based on {@link net.minecraft.item.BucketItem#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos)}
+     * Based on {@link net.minecraft.item.BucketItem#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos, BlockRayTraceResult)}
      *
      * @param player     Player who tried to place the fluid. May be null for blocks like dispensers.
      * @param worldIn    World to vaporize the fluid in.
@@ -274,6 +292,14 @@ public class FluidAttributes
         return color;
     }
 
+    public boolean shouldExtinguishFlames() {
+        return shouldExtinguishFlames;
+    }
+
+    public double getMotionScale(Entity entity, FluidState state) {
+        return motionScale.applyAsDouble(entity, state);
+    }
+
     public ResourceLocation getStillTexture()
     {
         return stillTexture;
@@ -308,6 +334,7 @@ public class FluidAttributes
     public boolean isGaseous(FluidStack stack){ return isGaseous(); }
     public Rarity getRarity(FluidStack stack){ return getRarity(); }
     public int getColor(FluidStack stack){ return getColor(); }
+    public boolean shouldExtinguishFlames(FluidStack stack) { return shouldExtinguishFlames(); }
     public ResourceLocation getStillTexture(FluidStack stack) { return getStillTexture(); }
     public ResourceLocation getFlowingTexture(FluidStack stack) { return getFlowingTexture(); }
     public SoundEvent getFillSound(FluidStack stack) { return getFillSound(); }
@@ -321,6 +348,7 @@ public class FluidAttributes
     public boolean isGaseous(IBlockDisplayReader world, BlockPos pos){ return isGaseous(); }
     public Rarity getRarity(IBlockDisplayReader world, BlockPos pos){ return getRarity(); }
     public int getColor(IBlockDisplayReader world, BlockPos pos){ return getColor(); }
+    public boolean shouldExtinguishFlames(IBlockDisplayReader world, BlockPos pos) { return shouldExtinguishFlames(); }
     public ResourceLocation getStillTexture(IBlockDisplayReader world, BlockPos pos) { return getStillTexture(); }
     public ResourceLocation getFlowingTexture(IBlockDisplayReader world, BlockPos pos) { return getFlowingTexture(); }
     public SoundEvent getFillSound(IBlockDisplayReader world, BlockPos pos) { return getFillSound(); }
@@ -352,6 +380,8 @@ public class FluidAttributes
         private int viscosity = 1000;
         private boolean isGaseous;
         private Rarity rarity = Rarity.COMMON;
+        private boolean shouldExtinguishFlames = true;
+        private ToDoubleBiFunction<Entity, FluidState> motionScale = (entity, state) -> 0.014D;
         private BiFunction<Builder,Fluid,FluidAttributes> factory;
 
         protected Builder(ResourceLocation stillTexture, ResourceLocation flowingTexture, BiFunction<Builder,Fluid,FluidAttributes> factory) {
@@ -424,6 +454,18 @@ public class FluidAttributes
         {
             this.fillSound = fillSound;
             this.emptySound = emptySound;
+            return this;
+        }
+
+        public final Builder shouldExtinguishFlames(boolean shouldExtinguishFlames)
+        {
+            this.shouldExtinguishFlames = shouldExtinguishFlames;
+            return this;
+        }
+
+        public final Builder motionScale(ToDoubleBiFunction<Entity, FluidState> motionScale)
+        {
+            this.motionScale = motionScale;
             return this;
         }
 

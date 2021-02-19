@@ -195,12 +195,18 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
      */
     void revive();
 
+    /**
+     * @return Returns the SlowDown factor for Movement in Water.
+     */
+    default float getEntityWaterSlowDown() {
+        return getEntity() instanceof LivingEntity ? getEntity().getEntityWaterSlowDown() : 0.8F;
+    }
 
     /**
      * @return Returns true if the entity is currently inside of any FluidState.
      */
     default boolean isInFluid() {
-        return getEntity().fluidInsideOf != null && getEntity().fluidInsideOf.getFluid() != Fluids.EMPTY;
+        return getEntity().fluidInsideOf != null && !getEntity().fluidInsideOf.isEmpty();
     }
 
     /**

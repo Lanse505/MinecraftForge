@@ -43,7 +43,7 @@ public class FluidTraversabilityTest
     private static ForgeFlowingFluid.Properties makeProperties()
     {
         return new ForgeFlowingFluid.Properties(test_fluid, test_fluid_flowing,
-            FluidAttributes.builder(FLUID_STILL, FLUID_FLOWING).overlay(FLUID_OVERLAY).color(0x3F1080FF))
+            FluidAttributes.builder(FLUID_STILL, FLUID_FLOWING).overlay(FLUID_OVERLAY).color(0x3F1080FF).shouldExtinguishFlames(false).motionScale((entity, state) -> 0.014D))
             .bucket(test_fluid_bucket).block(test_fluid_block);
     }
 

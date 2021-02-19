@@ -23,10 +23,12 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
@@ -131,5 +133,24 @@ public interface IForgeFluidState
     @Nullable
     default PathNodeType getDangerModifierType() {
         return getFluidState().getFluid().getDangerModifierType(getFluidState());
+    }
+
+    /**
+     * TODO: Clean-up Javadocs
+     * Default Implementation mimicking water.
+     *
+     * @param entity Entity whose motion is being scaled.
+     * @return Returns if it could scale the motion.
+     */
+    default boolean handleFluidAcceleration(Entity entity) {
+        return getFluidState().getFluid().handleFluidAcceleration(getFluidState(), entity);
+    }
+
+    /**
+     * This method handles "swimming" or "traveling" in Custom Fluids, by default this will be using a modified version of vanilla water behaviour.
+     * Override this at your own risk to change the "Travel" characteristics of your fluid.
+     */
+    default void handleFluidTravel(@Nullable Vector3d travelVector, LivingEntity entity, boolean isFluidJump) {
+        getFluidState().getFluid().handleFluidTravel(getFluidState(), travelVector, entity, isFluidJump);
     }
 }
