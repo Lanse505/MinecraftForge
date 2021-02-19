@@ -76,8 +76,8 @@
        }
  
        this.func_233566_aG_();
-+      if (isInFluid() && fluidInsideOf.handleFluidAcceleration(this)) {
-+         if (fluidInsideOf.func_206886_c().getAttributes().shouldExtinguishFlames()) this.func_70066_B();
++      if (isInFluid() && fluidInsideOf.func_206886_c() != net.minecraft.fluid.Fluids.field_204546_a && fluidInsideOf.func_206886_c() != net.minecraft.fluid.Fluids.field_207212_b && fluidInsideOf.func_206886_c() != net.minecraft.fluid.Fluids.field_204547_b && fluidInsideOf.func_206886_c() != net.minecraft.fluid.Fluids.field_207213_d) {
++         if (fluidInsideOf.handleFluidAcceleration(this) && fluidInsideOf.func_206886_c().getAttributes().shouldExtinguishFlames()) this.func_70066_B();
 +      }
        this.func_205012_q();
        this.func_205343_av();
