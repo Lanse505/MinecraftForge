@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/ai/goal/SwimGoal.java
++++ b/net/minecraft/entity/ai/goal/SwimGoal.java
+@@ -14,7 +14,7 @@
+    }
+ 
+    public boolean func_75250_a() {
+-      return this.field_75373_a.func_70090_H() && this.field_75373_a.func_233571_b_(FluidTags.field_206959_a) > this.field_75373_a.func_233579_cu_() || this.field_75373_a.func_180799_ab();
++      return this.field_75373_a.func_70090_H() && this.field_75373_a.func_233571_b_(FluidTags.field_206959_a) > this.field_75373_a.func_233579_cu_() || this.field_75373_a.func_180799_ab() || this.field_75373_a.isInFluid();
+    }
+ 
+    public void func_75246_d() {
